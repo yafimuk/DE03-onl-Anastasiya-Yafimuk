@@ -116,3 +116,96 @@ SELECT *
 FROM film f 
 INNER JOIN film_category fc ON f.film_id = fc.film_id 
 JOIN cat c ON fc.category_id = c.category_id
+
+
+
+
+
+
+
+--Пример
+-- 1. Найти всех клиентов, которые арендовали хотя бы один фильм категории Comedy.
+SELECT DISTINCT c.first_name, c.last_name
+FROM customer c
+JOIN rental r ON c.customer_id = r.customer_id
+JOIN inventory i ON r.inventory_id = i.inventory_id
+JOIN film_category fc ON i.film_id = fc.film_id
+JOIN category cat ON fc.category_id = cat.category_id
+WHERE lower(cat.name) = 'comedy';
+
+
+SELECT DISTINCT c.first_name, c.last_name
+FROM customer c
+WHERE c.customer_id IN (SELECT r.customer_id 
+						FROM rental r 
+						JOIN inventory i ON r.inventory_id = i.inventory_id
+						JOIN film_category fc ON i.film_id = fc.film_id
+						JOIN category cat ON fc.category_id = cat.category_id
+						WHERE lower(cat.name) = 'comedy')
+						
+						
+WITH list_of_customers AS(
+	SELECT r.customer_id 
+	FROM rental r 
+	JOIN inventory i ON r.inventory_id = i.inventory_id
+	JOIN film_category fc ON i.film_id = fc.film_id
+	JOIN category cat ON fc.category_id = cat.category_id
+	WHERE lower(cat.name) = 'comedy'
+)						
+
+
+SELECT DISTINCT c.first_name, c.last_name
+FROM customer c
+WHERE c.customer_id IN (SELECT customer_id FROM list_of_customers)
+
+
+SELECT DISTINCT c.first_name, c.last_name
+FROM customer c
+JOIN list_of_customers loc ON c.customer_id = loc.customer_id
+
+
+-- 2. Вывести название фильма и количество раз, которое его брали в аренду.
+EXPLAIN ANALYZE 
+SELECT f.title, COUNT(r.rental_id) AS rental_count
+FROM film f
+JOIN inventory i ON f.film_id = i.film_id
+JOIN rental r ON i.inventory_id = r.inventory_id
+GROUP BY f.film_id
+ORDER BY rental_count DESC;
+
+
+EXPLAIN ANALYZE
+SELECT f.title, (SELECT count(i.film_id)
+				 FROM inventory i 
+				 JOIN rental r ON i.inventory_id = r.inventory_id
+				 WHERE i.film_id = f.film_id )	rental_count
+FROM film f
+ORDER BY rental_count DESC;
+
+
+--3.Найти клиентов, которые не брали ни одного фильма категории Horror.
+EXPLAIN ANALYZE
+SELECT DISTINCT c.first_name, c.last_name
+FROM customer c
+LEFT JOIN rental r ON c.customer_id = r.customer_id
+LEFT JOIN inventory i ON r.inventory_id = i.inventory_id
+LEFT JOIN film_category fc ON i.film_id = fc.film_id
+LEFT JOIN category cat ON fc.category_id = cat.category_id AND lower(cat.name) = 'horror'
+WHERE cat.category_id IS NULL;
+
+
+
+EXPLAIN ANALYZE
+SELECT c.first_name, c.last_name
+FROM customer c
+WHERE c.customer_id NOT IN (
+    SELECT DISTINCT r.customer_id
+    FROM rental r
+    JOIN inventory i ON r.inventory_id = i.inventory_id
+    JOIN film_category fc ON i.film_id = fc.film_id
+    JOIN category cat ON fc.category_id = cat.category_id
+    WHERE lower(cat.name) = 'horror'
+);
+
+
+
