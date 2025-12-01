@@ -1,0 +1,4 @@
+id,value,description
+2,250,Updated second record from file 2
+3,150,Duplicate from file 2
+4,300,Unique item from file 2

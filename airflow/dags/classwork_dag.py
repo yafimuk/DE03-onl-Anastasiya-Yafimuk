@@ -5,7 +5,6 @@ from airflow.operators.empty import EmptyOperator
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.sensors.time_delta import TimeDeltaSensor
-from airflow.operators.email import EmailOperator
 
 STUDENT_NAME = "Nastya"          # ваше имя (латиницей, для dag_id)
 BIRTH_YEAR = 1997                # ваш год рождения
