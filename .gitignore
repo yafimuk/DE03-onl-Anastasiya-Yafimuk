@@ -1,2 +1,7 @@
-airflow/logs
-airflow/dags/__pycache__
+# Python cache
+**/__pycache__/
+*.pyc
+
+# Airflow logs
+logs/
+**/logs/
