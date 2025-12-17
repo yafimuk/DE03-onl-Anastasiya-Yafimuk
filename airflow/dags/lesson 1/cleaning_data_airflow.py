@@ -5,7 +5,7 @@ import pandas as pd
 
 
 def clean_students_data():
-    df = pd.read_csv('/opt/airflow/dags/students.csv')
+    df = pd.read_csv('/opt/airflow/dags/lesson1/students.csv')
 
     df['Имя'] = df['Имя'].str.strip().str.capitalize()
     df['Город'] = df['Город'].str.strip().str.capitalize()

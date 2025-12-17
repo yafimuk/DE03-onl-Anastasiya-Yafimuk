@@ -5,6 +5,7 @@ services:
     environment:
       - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__LOGGING__LOGGING_LEVEL=DEBUG
       - _PIP_ADDITIONAL_REQUIREMENTS=psycopg2-binary
     ports:
       - "8080:8080"
